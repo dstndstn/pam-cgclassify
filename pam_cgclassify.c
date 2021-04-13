@@ -10,21 +10,6 @@
 #include <security/pam_modutil.h>
 #include <security/pam_ext.h>
 
-/*
-int
-pam_sm_authenticate (pam_handle_t *pamh, int flags,
-                     int argc, const char **argv)
-{
-    return PAM_IGNORE;
-}
-
-int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc,
-                   const char **argv)
-{
-    return PAM_IGNORE;
-}
- */
- 
 /* --- session management functions --- */
 
 int pam_sm_close_session(pam_handle_t *pamh,int flags,int argc
@@ -69,12 +54,13 @@ int pam_sm_open_session(pam_handle_t *pamh, int flags, int argc,
         return PAM_SESSION_ERR;
     }
 
-    // Arbitrarily take the FIRST Slurm job that matches!
+    // Arbitrarily take the LAST Slurm job that matches!
     //printf("Found %i Slurm job cgroups.\n", (int)(theglob.gl_pathc));
     if (theglob.gl_pathc > 0) {
         //printf("Path: %s\n", theglob.gl_pathv[0]);
         char command[1024];
-        sprintf(command, "/usr/bin/cgclassify -g memory:%s %i", theglob.gl_pathv[0] + 21, pid);
+        // MAGIC number 21 below: len("/sys/fs/cgroup/memory")
+        sprintf(command, "/usr/bin/cgclassify -g memory,devices,cpuset:%s %i", theglob.gl_pathv[theglob.gl_pathc-1] + 21, pid);
         //printf("Command: %s\n", command);
         system(command);
     }
