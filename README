@@ -1,0 +1,6 @@
+pam_cgclassify: a PAM module to place a user's session (eg when ssh'ing in) into an existing
+Slurm cgroup, so that CPU and memory limits apply.
+
+On compute nodes, Slurm sets up a cgroup for each running job: /sys/fs/cgroup/memory/slurm/uid_<UID>/job_<JOBID>.
+
+When ssh'ing in, however, systemd will create a new user-UID.slice cgroup with none of those limits in place.  This module uses the `cgclassify` program to move the ssh session into the Slurm cgroup.  PAM is a convenient place to do this.
