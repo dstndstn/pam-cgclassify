@@ -8,4 +8,4 @@ install:
 	sudo cp pam_cgclassify.so /lib/security/
 
 pam:
-	sudo echo "session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_cgclassify.so" >> /etc/pam.d/sshd
+	sudo bash -c "echo 'session [success=ok ignore=ignore module_unknown=ignore default=bad]        pam_cgclassify.so' >> /etc/pam.d/sshd"
